@@ -2,11 +2,7 @@ const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
 const { createCanvas, loadImage } = require('@napi-rs/canvas');
 
 const client = new Client({ 
-    intents: [
-        GatewayIntentBits.Guilds, 
-        GatewayIntentBits.GuildMessages, 
-        GatewayIntentBits.MessageContent
-    ] 
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] 
 });
 
 client.on('messageCreate', async (message) => {
@@ -23,14 +19,15 @@ client.on('messageCreate', async (message) => {
         const canvas = createCanvas(1280, 800); 
         const ctx = canvas.getContext('2d');
 
+        // تحميل الخلفية
         const background = await loadImage('./template.png');
         ctx.drawImage(background, 0, 0, 1280, 800);
 
+        // دالة الرسم الموحدة
         async function drawUser(user, x, y, size) {
-            // استخدام اسم المستخدم (يفضل إنجليزي لضمان ظهور النص)
-            const name = user.username || "Unknown";
             const avatar = await loadImage(user.displayAvatarURL({ extension: 'png', size: 512 }));
             
+            // 1. قص ورسم الأفاتار
             ctx.save();
             ctx.beginPath();
             ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
@@ -39,26 +36,24 @@ client.on('messageCreate', async (message) => {
             ctx.drawImage(avatar, x, y, size, size);
             ctx.restore();
 
-            // إعدادات النص
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 30px Arial';
+            // 2. رسم الاسم (بشكل واضح)
+            ctx.fillStyle = '#000000'; // لون أسود للوضوح
+            ctx.font = 'bold 35px sans-serif'; 
             ctx.textAlign = 'center';
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
-            ctx.shadowBlur = 12;
             
-            // تم ضبط الارتفاع ليكون تحت كلمة Total Points مباشرة
-            ctx.fillText(String(name), x + size / 2, y + size + 75);
+            // الاسم يظهر تحت الأفاتار بمسافة 230 بكسل (أو عدلها حسب التجربة)
+            ctx.fillText(user.username, x + size / 2, y + size + 70);
         }
 
-        // الإحداثيات الجديدة بناءً على معاينة الصور التي أرسلتها:
-        // المركز 1 (الوسط) - الدائرة الذهبية
+        // الإحداثيات الدقيقة (تم تعديل المراكز 2 و 3 بناءً على معاينة الصور الأخيرة)
+        // المركز 1 (الوسط)
         await drawUser(userList[0], 525, 230, 230); 
         
-        // المركز 2 (اليسار) - الدائرة الفضية
-        await drawUser(userList[1], 155, 335, 190); 
+        // المركز 2 (اليسار)
+        await drawUser(userList[1], 185, 330, 190); 
         
-        // المركز 3 (اليمين) - الدائرة البرونزية
-        await drawUser(userList[2], 935, 335, 190);
+        // المركز 3 (اليمين)
+        await drawUser(userList[2], 905, 330, 190);
 
         const buffer = await canvas.encode('png');
         const attachment = new AttachmentBuilder(buffer, { name: 'leaderboard.png' });
@@ -69,8 +64,8 @@ client.on('messageCreate', async (message) => {
         });
 
     } catch (err) {
-        console.error('Error generating image:', err);
-        message.reply('⚠️ حدث خطأ أثناء معالجة الصورة.');
+        console.error(err);
+        message.reply('⚠️ حدث خطأ أثناء الرسم.');
     }
 });
 
