@@ -21,6 +21,7 @@ client.on('messageCreate', async (message) => {
         const background = await loadImage('./template.png');
         ctx.drawImage(background, 0, 0, 1280, 800);
 
+        // دالة الأفاتار
         async function drawAvatar(user, x, y, size) {
             const avatar = await loadImage(user.displayAvatarURL({ extension: 'png', size: 512 }));
             ctx.save();
@@ -32,27 +33,27 @@ client.on('messageCreate', async (message) => {
             ctx.restore();
         }
 
-        // رسم الأفاتارات (القيم تم مطابقتها بدقة مع صورتك)
-        await drawAvatar(userList[0], 525, 250, 230); // الوسط
-        await drawAvatar(userList[1], 180, 330, 190); // اليسار
-        await drawAvatar(userList[2], 910, 330, 190); // اليمين
+        // رسم الأفاتارات (موزونة بناءً على الصورة الأخيرة)
+        await drawAvatar(userList[0], 525, 250, 230); // المركز 1
+        await drawAvatar(userList[1], 180, 330, 190); // المركز 2
+        await drawAvatar(userList[2], 910, 330, 190); // المركز 3
 
-        // رسم الـ username فقط (بالإنجليزي)
-        ctx.fillStyle = '#4a3c2c'; 
-        ctx.font = 'bold 30px Arial';
+        // رسم الأسماء (الخطوة الحاسمة)
+        ctx.fillStyle = '#4a3c2c'; // لون بني غامق
+        ctx.font = 'bold 35px Arial';
         ctx.textAlign = 'center';
         
-        // إحداثيات النص لتكون تحت Total Points مباشرة
-        ctx.fillText(userList[0].username, 640, 530); 
-        ctx.fillText(userList[1].username, 275, 570); 
-        ctx.fillText(userList[2].username, 1005, 570);
+        // إحداثيات النص بالضبط تحت كلمة Total Points
+        ctx.fillText(userList[0].username, 640, 520);  
+        ctx.fillText(userList[1].username, 275, 560);  
+        ctx.fillText(userList[2].username, 1005, 560); 
 
         const buffer = await canvas.encode('png');
         const attachment = new AttachmentBuilder(buffer, { name: 'leaderboard.png' });
         
         await message.reply({ files: [attachment] });
     } catch (err) {
-        console.error(err);
+        console.error("Error in drawing:", err);
         message.reply('حدث خطأ أثناء الرسم.');
     }
 });
