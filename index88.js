@@ -29,21 +29,17 @@ client.on('messageCreate', async (message) => {
             ctx.clip();
             ctx.drawImage(avatar, x, y, size, size);
             ctx.restore();
-
-            ctx.fillStyle = '#4a3c2c'; 
-            ctx.font = 'bold 35px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(user.username, x + size / 2, y + size + 75);
         }
 
-        // 1. المركز (الذهبي): كما هو
+        // الإحداثيات النهائية بعد التدقيق:
+        // 1. الوسط (الذهبي): 525, 250, حجم 230
         await drawUser(userList[0], 525, 250, 230); 
         
-        // 2. اليسار (الفضي): (تحريك يسار 140، أعلى 290)
-        await drawUser(userList[1], 140, 290, 190); 
+        // 2. الفضي: زدت الـ X قليلاً للليمين، وزدت الـ Y قليلاً للأسفل
+        await drawUser(userList[1], 155, 335, 190); 
         
-        // 3. اليمين (البرونزي): (تحريك يمين 950، أعلى 290)
-        await drawUser(userList[2], 950, 290, 190);
+        // 3. البرونزي: نقصت الـ X قليلاً لليسار، وزدت الـ Y قليلاً للأسفل
+        await drawUser(userList[2], 895, 335, 190);
 
         const buffer = await canvas.encode('png');
         const attachment = new AttachmentBuilder(buffer, { name: 'leaderboard.png' });
