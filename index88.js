@@ -1,4 +1,5 @@
 const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
+// بدلاً من السطر القديم، ضع هذا:
 const { createCanvas, loadImage } = require('@napi-rs/canvas');
 
 const client = new Client({ 
