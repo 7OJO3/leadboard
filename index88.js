@@ -15,7 +15,6 @@ client.on('messageCreate', async (message) => {
 
     try {
         await message.channel.sendTyping();
-
         const canvas = createCanvas(1280, 800); 
         const ctx = canvas.getContext('2d');
 
@@ -23,9 +22,9 @@ client.on('messageCreate', async (message) => {
         ctx.drawImage(background, 0, 0, 1280, 800);
 
         async function drawUser(user, x, y, size) {
-            console.log(`رسم المستخدم: ${user.username}`); // لنتأكد من الـ Console
             const avatar = await loadImage(user.displayAvatarURL({ extension: 'png', size: 512 }));
             
+            // 1. رسم الأفاتار
             ctx.save();
             ctx.beginPath();
             ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
@@ -33,32 +32,29 @@ client.on('messageCreate', async (message) => {
             ctx.clip();
             ctx.drawImage(avatar, x, y, size, size);
             ctx.restore();
-
-            // رسم الاسم
-            ctx.fillStyle = '#ffffff'; 
-            ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 4;
-            ctx.font = 'bold 35px sans-serif'; 
-            ctx.textAlign = 'center';
-            
-            // التأكد من الرسم
-            ctx.strokeText(user.username, x + size / 2, y + size + 75);
-            ctx.fillText(user.username, x + size / 2, y + size + 75);
         }
 
-        // الإحداثيات المضبوطة للقالب الأصلي (X, Y, Size)
-        await drawUser(userList[0], 525, 230, 230); // الوسط
-        await drawUser(userList[1], 155, 335, 190); // اليسار
-        await drawUser(userList[2], 935, 335, 190); // اليمين
+        // 2. رسم جميع الأفاتارات أولاً
+        await drawUser(userList[0], 525, 250, 230); 
+        await drawUser(userList[1], 180, 330, 190); 
+        await drawUser(userList[2], 910, 330, 190);
+
+        // 3. رسم الأسماء أخيراً فوق كل شيء (لضمان ظهورها)
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold 32px Arial';
+        ctx.textAlign = 'center';
+        
+        ctx.fillText(userList[0].username, 640, 520); // اسم المركز 1
+        ctx.fillText(userList[1].username, 275, 560); // اسم المركز 2
+        ctx.fillText(userList[2].username, 1005, 560); // اسم المركز 3
 
         const buffer = await canvas.encode('png');
         const attachment = new AttachmentBuilder(buffer, { name: 'leaderboard.png' });
         
         await message.reply({ files: [attachment] });
-
     } catch (err) {
         console.error(err);
-        message.reply('حدث خطأ في الرسم.');
+        message.reply('حدث خطأ أثناء الرسم.');
     }
 });
 
