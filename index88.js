@@ -21,10 +21,8 @@ client.on('messageCreate', async (message) => {
         const background = await loadImage('./template.png');
         ctx.drawImage(background, 0, 0, 1280, 800);
 
-        async function drawUser(user, x, y, size) {
+        async function drawAvatar(user, x, y, size) {
             const avatar = await loadImage(user.displayAvatarURL({ extension: 'png', size: 512 }));
-            
-            // 1. رسم الأفاتار
             ctx.save();
             ctx.beginPath();
             ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
@@ -34,19 +32,20 @@ client.on('messageCreate', async (message) => {
             ctx.restore();
         }
 
-        // 2. رسم جميع الأفاتارات أولاً
-        await drawUser(userList[0], 525, 250, 230); 
-        await drawUser(userList[1], 180, 330, 190); 
-        await drawUser(userList[2], 910, 330, 190);
+        // رسم الأفاتارات (القيم تم مطابقتها بدقة مع صورتك)
+        await drawAvatar(userList[0], 525, 250, 230); // الوسط
+        await drawAvatar(userList[1], 180, 330, 190); // اليسار
+        await drawAvatar(userList[2], 910, 330, 190); // اليمين
 
-        // 3. رسم الأسماء أخيراً فوق كل شيء (لضمان ظهورها)
-        ctx.fillStyle = '#000000';
-        ctx.font = 'bold 32px Arial';
+        // رسم الـ username فقط (بالإنجليزي)
+        ctx.fillStyle = '#4a3c2c'; 
+        ctx.font = 'bold 30px Arial';
         ctx.textAlign = 'center';
         
-        ctx.fillText(userList[0].username, 640, 520); // اسم المركز 1
-        ctx.fillText(userList[1].username, 275, 560); // اسم المركز 2
-        ctx.fillText(userList[2].username, 1005, 560); // اسم المركز 3
+        // إحداثيات النص لتكون تحت Total Points مباشرة
+        ctx.fillText(userList[0].username, 640, 530); 
+        ctx.fillText(userList[1].username, 275, 570); 
+        ctx.fillText(userList[2].username, 1005, 570);
 
         const buffer = await canvas.encode('png');
         const attachment = new AttachmentBuilder(buffer, { name: 'leaderboard.png' });
