@@ -36,9 +36,14 @@ client.on('messageCreate', async (message) => {
             ctx.fillText(user.username, x + size / 2, y + size + 75);
         }
 
+        // 1. المركز (الذهبي): كما هو
         await drawUser(userList[0], 525, 250, 230); 
-        await drawUser(userList[1], 180, 330, 190); 
-        await drawUser(userList[2], 910, 330, 190);
+        
+        // 2. اليسار (الفضي): (تحريك يسار 140، أعلى 290)
+        await drawUser(userList[1], 140, 290, 190); 
+        
+        // 3. اليمين (البرونزي): (تحريك يمين 950، أعلى 290)
+        await drawUser(userList[2], 950, 290, 190);
 
         const buffer = await canvas.encode('png');
         const attachment = new AttachmentBuilder(buffer, { name: 'leaderboard.png' });
