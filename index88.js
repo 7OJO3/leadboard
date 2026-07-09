@@ -9,7 +9,7 @@ client.on('messageCreate', async (message) => {
     if (message.author.bot || !message.content.startsWith('!top')) return;
 
     const users = message.mentions.users;
-    if (users.size < 3) return message.reply('❌ يجب عليك منشن 3 أشخاص!');
+    if (users.size < 3) return message.reply('❌ يرجى منشن 3 أشخاص!');
 
     const userList = Array.from(users.values());
 
@@ -32,29 +32,29 @@ client.on('messageCreate', async (message) => {
             ctx.restore();
         }
 
-        // الرسم بناءً على إحداثياتك (X, Y, R)
-        // الفضية (#2)
-        await drawAvatar(userList[1], 165, 425, 115);
-        // الذهبية (#1)
+        // الرسم بناءً على طلبك بالترتيب:
+        // 1. المنشن الأول -> الذهبية (الوسط)
         await drawAvatar(userList[0], 500, 425, 115);
-        // البرونزية (#3)
+        // 2. المنشن الثاني -> الفضية (اليسار)
+        await drawAvatar(userList[1], 165, 425, 115);
+        // 3. المنشن الثالث -> البرونزية (اليمين)
         await drawAvatar(userList[2], 835, 425, 115);
 
-        // رسم الأسماء بوضوح تام (يتم الرسم بعد الأفاتارات لضمان الظهور)
-        ctx.fillStyle = '#ffffff'; // أبيض
-        ctx.strokeStyle = '#000000'; // تحديد أسود للتباين
-        ctx.lineWidth = 5;
+        // رسم الأسماء تحت كل دائرة
+        ctx.fillStyle = '#ffffff'; 
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 4;
         ctx.font = 'bold 35px Arial';
         ctx.textAlign = 'center';
 
-        // الإحداثيات تحت الدوائر مباشرة (Y = 425 + 115 + 60)
-        ctx.strokeText(userList[1].username, 165, 600);
-        ctx.fillText(userList[1].username, 165, 600);
-
-        ctx.strokeText(userList[0].username, 500, 600);
+        // إحداثيات النصوص تحت الدوائر
+        ctx.strokeText(userList[0].username, 500, 600); // الأول
         ctx.fillText(userList[0].username, 500, 600);
 
-        ctx.strokeText(userList[2].username, 835, 600);
+        ctx.strokeText(userList[1].username, 165, 600); // الثاني
+        ctx.fillText(userList[1].username, 165, 600);
+
+        ctx.strokeText(userList[2].username, 835, 600); // الثالث
         ctx.fillText(userList[2].username, 835, 600);
 
         const buffer = await canvas.encode('png');
@@ -63,7 +63,7 @@ client.on('messageCreate', async (message) => {
         await message.reply({ files: [attachment] });
     } catch (err) {
         console.error(err);
-        message.reply('حدث خطأ أثناء الرسم.');
+        message.reply('حدث خطأ أثناء المعالجة.');
     }
 });
 
