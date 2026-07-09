@@ -15,6 +15,7 @@ client.on('messageCreate', async (message) => {
 
     try {
         await message.channel.sendTyping();
+        // حجم الكانفاس يجب أن يطابق أبعاد صورتك (سنفرض 1280x800 كمثال)
         const canvas = createCanvas(1280, 800); 
         const ctx = canvas.getContext('2d');
 
@@ -34,27 +35,27 @@ client.on('messageCreate', async (message) => {
             ctx.drawImage(avatar, x, y, size, size);
             ctx.restore();
 
-            // رسم الاسم (تم تغيير اللون والخط للوضوح)
+            // رسم الاسم (تم تغيير اللون للوضوح)
             ctx.fillStyle = '#4a3c2c'; // لون بني غامق ليناسب ألوان الكؤوس
-            ctx.font = 'bold 30px Arial';
+            ctx.font = 'bold 35px Arial';
             ctx.textAlign = 'center';
             ctx.fillText(user.username, x + size / 2, y + size + 75);
         }
 
-        // الإحداثيات النهائية والمضبوطة لتتوسط الدوائر تماماً
-        // المركز 1 (الوسط)
+        // 1. المركز (الذهبي): X=525, Y=250, الحجم=230
         await drawUser(userList[0], 525, 250, 230); 
         
-        // المركز 2 (اليسار)
+        // 2. اليسار (الفضي): X=180, Y=330, الحجم=190
         await drawUser(userList[1], 180, 330, 190); 
         
-        // المركز 3 (اليمين)
+        // 3. اليمين (البرونزي): X=910, Y=330, الحجم=190
         await drawUser(userList[2], 910, 330, 190);
 
         const buffer = await canvas.encode('png');
         const attachment = new AttachmentBuilder(buffer, { name: 'leaderboard.png' });
         
         await message.reply({ 
+            content: '🏆 **قائمة التوب المحدثة والموزونة:**', 
             files: [attachment] 
         });
 
