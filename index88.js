@@ -27,6 +27,7 @@ client.on('messageCreate', async (message) => {
         ctx.drawImage(background, 0, 0, 1280, 800);
 
         async function drawUser(user, x, y, size) {
+            // استخدام اسم المستخدم (يفضل إنجليزي لضمان ظهور النص)
             const name = user.username || "Unknown";
             const avatar = await loadImage(user.displayAvatarURL({ extension: 'png', size: 512 }));
             
@@ -38,25 +39,26 @@ client.on('messageCreate', async (message) => {
             ctx.drawImage(avatar, x, y, size, size);
             ctx.restore();
 
-            // رسم اسم المستخدم
+            // إعدادات النص
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 30px Arial';
             ctx.textAlign = 'center';
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-            ctx.shadowBlur = 10;
-            // تم تعديل الـ y هنا ليظهر الاسم تحت كلمة Total Points
-            ctx.fillText(String(name), x + size / 2, y + size + 70);
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+            ctx.shadowBlur = 12;
+            
+            // تم ضبط الارتفاع ليكون تحت كلمة Total Points مباشرة
+            ctx.fillText(String(name), x + size / 2, y + size + 75);
         }
 
-        // الإحداثيات المحدثة لتناسب الصورة بالضبط:
-        // المركز 1 (الوسط): تم ترحيله قليلاً للأعلى
+        // الإحداثيات الجديدة بناءً على معاينة الصور التي أرسلتها:
+        // المركز 1 (الوسط) - الدائرة الذهبية
         await drawUser(userList[0], 525, 230, 230); 
         
-        // المركز 2 (اليسار): تم ضبطه ليتوسط الدائرة الفضية
-        await drawUser(userList[1], 165, 330, 190); 
+        // المركز 2 (اليسار) - الدائرة الفضية
+        await drawUser(userList[1], 155, 335, 190); 
         
-        // المركز 3 (اليمين): تم ترحيله لليمين ليتوسط الدائرة البرونزية
-        await drawUser(userList[2], 925, 330, 190);
+        // المركز 3 (اليمين) - الدائرة البرونزية
+        await drawUser(userList[2], 935, 335, 190);
 
         const buffer = await canvas.encode('png');
         const attachment = new AttachmentBuilder(buffer, { name: 'leaderboard.png' });
@@ -68,7 +70,7 @@ client.on('messageCreate', async (message) => {
 
     } catch (err) {
         console.error('Error generating image:', err);
-        message.reply('⚠️ حدث خطأ أثناء معالجة الصورة، تأكد من وجود ملف template.png في المجلد الرئيسي.');
+        message.reply('⚠️ حدث خطأ أثناء معالجة الصورة.');
     }
 });
 
