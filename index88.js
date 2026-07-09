@@ -20,12 +20,8 @@ client.on('messageCreate', async (message) => {
         const background = await loadImage('./template.png');
         ctx.drawImage(background, 0, 0, 1280, 800);
 
-        // دالة محسنة لرسم المستخدم مع معالجة الاسم
         async function drawUser(user, x, y, size) {
-            // نضمن أن الاسم نص، وإذا لم يوجد نستخدم "Unknown"
             const name = user.username || "Unknown";
-            
-            // تحميل الأفاتار
             const avatar = await loadImage(user.displayAvatarURL({ extension: 'png', size: 256 }));
             
             ctx.save();
@@ -36,18 +32,21 @@ client.on('messageCreate', async (message) => {
             ctx.drawImage(avatar, x, y, size, size);
             ctx.restore();
 
-            // رسم الاسم
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 25px Arial';
             ctx.textAlign = 'center';
-            // نستخدم String() للتأكد أن القيمة نصية دائماً
             ctx.fillText(String(name), x + size / 2, y + size + 40);
         }
 
-        // استدعاء الدالة بدون تمرير الاسم (الدالة ستستخرجه بنفسها من كائن المستخدم)
-        await drawUser(userList[0], 520, 200, 240); 
-        await drawUser(userList[1], 150, 280, 200); 
-        await drawUser(userList[2], 890, 280, 200);
+        // الإحداثيات المعدلة لتناسب دوائر التصميم:
+        // المركز 1 (الوسط): x=525, y=240, size=230
+        await drawUser(userList[0], 525, 240, 230); 
+        
+        // المركز 2 (اليسار): x=175, y=325, size=190
+        await drawUser(userList[1], 175, 325, 190); 
+        
+        // المركز 3 (اليمين): x=895, y=325, size=190
+        await drawUser(userList[2], 895, 325, 190);
 
         const attachment = new AttachmentBuilder(await canvas.encode('png'), { name: 'leaderboard.png' });
         message.channel.send({ files: [attachment] });
